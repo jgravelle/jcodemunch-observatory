@@ -47,6 +47,16 @@
       "url": "https://github.com/jgravelle/jcodemunch-mcp",
       "label": "jcodemunch-mcp",
       "blurb": "Self-audit — the tool measuring itself."
+    },
+    {
+      "url": "https://github.com/jgravelle/jdocmunch-mcp",
+      "label": "jdocmunch-mcp",
+      "blurb": "Companion MCP for documentation retrieval."
+    },
+    {
+      "url": "https://github.com/jgravelle/jdatamunch-mcp",
+      "label": "jdatamunch-mcp",
+      "blurb": "Companion MCP for tabular data exploration."
     }
   ]
 }
