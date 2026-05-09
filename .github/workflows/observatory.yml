@@ -1,0 +1,65 @@
+name: observatory
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'    # Mondays 06:00 UTC
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'observatory.config.json'
+      - '.github/workflows/observatory.yml'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: observatory
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install jcodemunch-mcp
+        run: pip install --upgrade jcodemunch-mcp
+
+      - name: Cache observatory workdir
+        uses: actions/cache@v4
+        with:
+          path: .observatory_work
+          key: observatory-workdir-${{ github.run_id }}
+          restore-keys: |
+            observatory-workdir-
+
+      - name: Build observatory
+        run: |
+          jcodemunch-mcp observatory build \
+            --config observatory.config.json \
+            --output-dir public \
+            --workdir .observatory_work
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

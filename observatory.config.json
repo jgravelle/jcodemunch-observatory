@@ -1,0 +1,52 @@
+{
+  "output_dir": "./public",
+  "workdir": "./.observatory_work",
+  "history_cap": 52,
+  "repos": [
+    {
+      "url": "https://github.com/expressjs/express",
+      "label": "Express",
+      "blurb": "Classic Node.js web framework."
+    },
+    {
+      "url": "https://github.com/tiangolo/fastapi",
+      "label": "FastAPI",
+      "blurb": "Modern Python async web framework."
+    },
+    {
+      "url": "https://github.com/gin-gonic/gin",
+      "label": "Gin",
+      "blurb": "High-performance Go HTTP framework."
+    },
+    {
+      "url": "https://github.com/pydantic/pydantic",
+      "label": "Pydantic",
+      "blurb": "Python data validation via type hints."
+    },
+    {
+      "url": "https://github.com/django/django",
+      "label": "Django",
+      "blurb": "Python's batteries-included web framework."
+    },
+    {
+      "url": "https://github.com/pallets/flask",
+      "label": "Flask",
+      "blurb": "Minimal Python web framework."
+    },
+    {
+      "url": "https://github.com/nestjs/nest",
+      "label": "NestJS",
+      "blurb": "Progressive Node.js framework with TypeScript."
+    },
+    {
+      "url": "https://github.com/spf13/cobra",
+      "label": "Cobra",
+      "blurb": "Go CLI library powering kubectl, hugo, gh."
+    },
+    {
+      "url": "https://github.com/jgravelle/jcodemunch-mcp",
+      "label": "jcodemunch-mcp",
+      "blurb": "Self-audit — the tool measuring itself."
+    }
+  ]
+}
