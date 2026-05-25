@@ -29,9 +29,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 
@@ -76,7 +76,7 @@ jobs:
           fi
 
       - name: Cache observatory workdir
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .observatory_work
           # Cache key prefix tracks the jcm INDEX_VERSION. Bump when jcm
@@ -96,7 +96,7 @@ jobs:
             --workdir .observatory_work
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: public
 
@@ -108,4 +108,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
