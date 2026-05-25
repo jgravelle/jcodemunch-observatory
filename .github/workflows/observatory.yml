@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Pin jcodemunch-mcp to this exact version (e.g. 1.93.0). Empty = install latest. Use after a fresh PyPI publish to dodge CDN propagation lag.'
+        description: 'Pin jcodemunch-mcp to this exact version (e.g. 1.93.0). Empty = install latest. Use after a fresh PyPI publish to dodge CDN propagation lag. If PyPI install fails (e.g. quarantine), falls back to the GitHub-release wheel for the same version.'
         required: false
         default: ''
   push:
@@ -38,13 +38,33 @@ jobs:
       - name: Install jcodemunch-mcp
         env:
           PINNED_VERSION: ${{ inputs.version }}
+          # GitHub-release wheel fallback for when PyPI install fails. Active
+          # during the PyPI quarantine (project-level: every version is gated,
+          # so a PyPI version-pin can't dodge it). Harmless once PyPI is back —
+          # the PyPI install succeeds first and the fallback never fires, so
+          # this needs no revert when the quarantine lifts.
+          FALLBACK_REPO: jgravelle/jcodemunch-mcp
         run: |
+          set -o pipefail
+
+          gh_wheel_install() {
+            ver="$1"
+            url="https://github.com/${FALLBACK_REPO}/releases/download/v${ver}/jcodemunch_mcp-${ver}-py3-none-any.whl"
+            echo "::notice::PyPI unavailable; installing jcodemunch-mcp ${ver} from GitHub-release wheel"
+            pip install --upgrade "$url"
+          }
+
           if [ -n "$PINNED_VERSION" ]; then
             echo "::notice::installing jcodemunch-mcp==$PINNED_VERSION (pinned)"
-            pip install --upgrade "jcodemunch-mcp==$PINNED_VERSION"
+            pip install --upgrade "jcodemunch-mcp==$PINNED_VERSION" || gh_wheel_install "$PINNED_VERSION"
           else
             echo "::notice::installing latest jcodemunch-mcp"
-            pip install --upgrade jcodemunch-mcp
+            if ! pip install --upgrade jcodemunch-mcp; then
+              LATEST=$(curl -fsSL "https://api.github.com/repos/${FALLBACK_REPO}/releases/latest" \
+                | python -c "import sys, json; print(json.load(sys.stdin)['tag_name'].lstrip('v'))")
+              echo "::notice::resolved latest GitHub release: $LATEST"
+              gh_wheel_install "$LATEST"
+            fi
           fi
           # Print the resolved version so reruns can spot CDN-propagation
           # mismatches without digging through pip output.
