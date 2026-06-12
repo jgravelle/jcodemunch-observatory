@@ -81,12 +81,14 @@ jobs:
           path: .observatory_work
           # Cache key prefix tracks the jcm INDEX_VERSION. Bump when jcm
           # changes its index schema or import-graph semantics so cached
-          # SQLite indexes don't shadow the new behavior. v13 (jcm 1.96.0)
-          # added source_roots for #288 phase 2 (subdir merge); file paths
-          # in the index are now git-root-relative.
-          key: observatory-workdir-v13-${{ github.run_id }}
+          # SQLite indexes don't shadow the new behavior (soft-migration on
+          # load does NOT re-extract). v16 catches up with jcm's current
+          # INDEX_VERSION; the prefix had sat at v13 (jcm 1.96.0) through
+          # three schema bumps, so cached quarantine-era indexes were being
+          # migrated in place instead of rebuilt.
+          key: observatory-workdir-v16-${{ github.run_id }}
           restore-keys: |
-            observatory-workdir-v13-
+            observatory-workdir-v16-
 
       - name: Build observatory
         run: |
